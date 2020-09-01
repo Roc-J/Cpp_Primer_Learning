@@ -11,9 +11,11 @@ C++ primer第五版 主要用来学习C++语言的细节，书中包含了大量
 
 ### 目录
 * [第一章 开始](https://github.com/Roc-J/Cpp_Primer_Learning/tree/master/Ch01)
+
 ##### 第一部分 C++基础
 * [第二章 变量和基本类型](https://github.com/Roc-J/Cpp_Primer_Learning/tree/master/Ch02)
 * [第三章 字符串、向量和数组](https://github.com/Roc-J/Cpp_Primer_Learning/tree/master/Ch03)
 * [第四章 表达式](https://github.com/Roc-J/Cpp_Primer_Learning/tree/master/Ch04)
 * [第五章 语句](https://github.com/Roc-J/Cpp_Primer_Learning/tree/master/Ch05)
 * [第六章 函数](https://github.com/Roc-J/Cpp_Primer_Learning/tree/master/Ch06)
+* [第七章 类](https://github.com/Roc-J/Cpp_Primer_Learning/tree/master/Ch07)
