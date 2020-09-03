@@ -51,7 +51,7 @@ istream &read(istream &is, Sales_data &item)
 
 ostream &print(ostream &os, const Sales_data &item)
 {
-    os << item.isbn() << " " << item.units_sold << " " << item.revenue << endl;
+    os << item.isbn() << " " << item.units_sold << " " << item.revenue;
     return os;
 }
 
