@@ -592,3 +592,236 @@ int main()
 }
 ```
 
+### 习题10.22  
+重写统计长度小于等于6的单词数量的程序，使用函数代替 lambda。
+
+```
+#include<iostream>
+#include<vector>
+#include<string>
+#include<algorithm>
+#include<functional>
+
+using namespace std;
+using namespace placeholders;
+
+void elimDups(vector<string> &words)
+{
+     //按字典序排序words，以便查找重复单词
+     sort(words.begin(), words.end());
+     auto end_unique = unique(words.begin(), words.end());
+     words.erase(end_unique, words.end());
+}
+
+string make_plural(int count, string s1, string s2)
+{
+    string result ;
+    if (count>1)
+    {
+        result =  s1+s2;
+    }
+    else
+    {
+        result = s1;
+    }
+    return result;
+}
+
+bool check_size(const string &s, string::size_type sz)
+{
+     return s.size() >= sz;
+}
+
+void biggies(vector<string> &words, vector<string>::size_type sz)
+{
+    elimDups(words);
+    stable_sort(words.begin(), words.end(), [] (const string &a, const string &b) { return a.size() < b.size() ;});
+
+    auto ret = count_if(words.begin(), words.end(), bind(check_size, _1, sz));
+
+    cout << ret << " " << make_plural(ret, "word", "s") << " of length " << sz << " or longer " << endl; 
+}
+
+int main()
+{
+    vector<string> ivec = {"the","quick","red","fox","jumps","over","the","slow","red","turtle"};
+    biggies(ivec, 6);
+    return 0;
+}
+```
+
+### 习题10.23   
+bind 接受几个参数？
+
+bind调用形式  
+auto newCallable = bind(callable, arg_list);  
+arg_list参数个数+callable 个参数  
+
+### 习题10.24  
+给定一个string，使用 bind 和 check_size 在一个 int 的vector 中查找第一个大于string长度的值。
+```
+#include<iostream>
+#include<vector>
+#include<string>
+#include<algorithm>
+#include<functional>
+
+using namespace std;
+using namespace placeholders;
+
+bool check_size(int x, const string &a)
+{
+    return x > a.size();
+}
+
+int main()
+{
+    vector<int> ivec = {1,2,4,5,6,7,8,9};
+    string s1 = "hello";
+
+    auto f = find_if(ivec.cbegin(), ivec.cend(), bind(check_size, _1, s1));
+    if(f!=ivec.end())
+        cout << *f << endl;
+    return 0;
+}
+```
+
+### 习题10.25  
+在10.3.2节的练习中，编写了一个使用partition 的biggies版本。使用 check_size 和 bind 重写此函数。
+```
+#include<iostream>
+#include<vector>
+#include<string>
+#include<algorithm>
+#include<functional>
+
+using namespace std;
+using namespace placeholders;
+
+void elimDups(vector<string> &words)
+{
+     //按字典序排序words，以便查找重复单词
+     sort(words.begin(), words.end());
+
+     auto end_unique = unique(words.begin(), words.end());
+
+     words.erase(end_unique, words.end());
+}
+
+string make_plural(int count, string s1, string s2)
+{
+    string result ;
+    if (count>1)
+    {
+        result =  s1+s2;
+    }
+    else
+    {
+        result = s1;
+    }
+    return result;
+}
+
+bool check_size(const string &s, string::size_type sz)
+{
+     return s.size() < sz;
+}
+
+void biggies(vector<string> &words, vector<string>::size_type sz)
+{
+     elimDups(words);
+
+     stable_sort(words.begin(), words.end(), [] (const string &a, const string &b) { return a.size() < b.size() ;});
+
+     auto wc = partition(words.begin(), words.end(), bind(check_size, _1, sz));
+     auto count = words.end() - wc;
+
+     cout << count << " " << make_plural(count, "word", "s") << " of length " << sz << " or longer " << endl; 
+
+     for_each(wc, words.end(), [] (const string & s) { cout << s << " " ;});
+
+     cout << endl;
+}
+
+int main()
+{
+    vector<string> ivec = {"the","quick","red","fox","jumps","over","the","slow","red","turtle"};
+    biggies(ivec, 5);
+    return 0;
+}
+```
+
+
+### 习题10.26  
+解释三种迭代器的不同之处。
+
+back_inserter 创建一个使用push_back的迭代器  
+front_inserter 创建一个使用push_front的迭代器  
+inserter 创建一个使用insert的迭代器。此函数接受第二个参数，这个参数 必须是一个指向给定容器的迭代器。元素将被插入到给定迭代器所表示的元素之前。  
+
+### 习题10.27  
+除了 unique 之外，标准库还定义了名为 unique_copy 的函数，它接受第三个迭代器，表示拷贝不重复元素的目的位置。编写一个程序，使用 unique_copy将一个vector中不重复的元素拷贝到一个初始化为空的list中。
+```
+#include<iostream>
+#include<vector>
+#include<list>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+    vector<int> ivec = {1,2,3,3,4,5,6,6,7,8,9};
+    list<int> ilst;
+    unique_copy(ivec.begin(), ivec.end(), back_inserter(ilst));
+    for (auto &x : ilst)
+    {
+        cout << x << " ";
+    }
+    cout << endl;
+    return 0;
+}
+```
+
+### 习题10.28  
+
+一个vector 中保存 1 到 9，将其拷贝到三个其他容器中。分别使用inserter、back_inserter 和 front_inserter 将元素添加到三个容器中。对每种 inserter，估计输出序列是怎样的，运行程序验证你的估计是否正确。
+```
+#include<iostream>
+#include<vector>
+#include<list>
+#include<algorithm>
+#include<functional>
+
+using namespace std;
+
+int main()
+{
+    vector<int> ivec = {1,2,3,4,5,6,7,8,9};
+    list<int> ivec2, ivec3, ivec4;
+    copy(ivec.begin(), ivec.end(), inserter(ivec2, ivec2.begin()));
+    copy(ivec.begin(), ivec.end(), back_inserter(ivec3));
+    copy(ivec.begin(), ivec.end(), front_inserter(ivec4));
+
+    for (auto &x : ivec2)
+    {
+        cout << x << " ";
+    }
+    cout << endl;
+
+    for (auto &x : ivec3)
+    {
+        cout << x << " ";
+    }
+    cout << endl;
+
+    for (auto &x : ivec4)
+    {
+        cout << x << " ";
+    }
+    cout << endl;
+    return 0;
+}
+```
+
+### 习题10.29  
