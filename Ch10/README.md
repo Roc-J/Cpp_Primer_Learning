@@ -825,3 +825,280 @@ int main()
 ```
 
 ### 习题10.29  
+编写程序，使用流迭代器读取一个文本文件，存入一个vector中的string里 
+```
+#include<iostream>
+#include<fstream>
+#include<iterator>
+#include<vector>
+#include<string>
+ 
+using namespace std;  
+
+int main()
+{
+    string path = "test.txt";
+    ifstream ifile(path);
+    istream_iterator<string> in(ifile), eof;
+    vector<string> svec;
+    copy(in, eof, back_inserter(svec));
+
+    copy(svec.cbegin(), svec.cend(), ostream_iterator<string>(cout, "\n"));
+    return 0;
+}
+```
+
+### 习题10.30  
+使用流迭代器、sort 和 copy 从标准输入读取一个整数序列，将其排序，并将结果写到标准输出。  
+```
+#include<iostream>
+#include<algorithm>
+#include<iterator>
+#include<vector>
+
+using namespace std;
+
+int main()
+{
+    
+    istream_iterator<int> in(cin), eof;
+    ostream_iterator<int> out(cout, "\n");
+    vector<int> ivec;
+    copy(in, eof, back_inserter(ivec));
+
+    sort(ivec.begin(), ivec.end());
+    copy(ivec.cbegin(), ivec.cend(), out);
+    return 0;
+}
+
+```
+
+### 习题10.31  
+修改前一题的程序，使其只打印不重复的元素。你的程序应该使用 unique_copy。
+```
+#include<iostream>
+#include<algorithm>
+#include<iterator>
+#include<vector>
+
+using namespace std;
+
+int main()
+{
+    
+    istream_iterator<int> in(cin), eof;
+    ostream_iterator<int> out(cout, "\n");
+    vector<int> ivec;
+    copy(in, eof, back_inserter(ivec));
+
+    sort(ivec.begin(), ivec.end());
+    unique_copy(ivec.cbegin(), ivec.cend(), out);
+    return 0;
+}
+```
+
+### 习题10.32  
+重写1.6节中的书店程序，使用一个vector保存交易记录，使用不同算法完成处理。使用 sort 和10.3.1节中的 compareIsbn 函数来排序交易记录，然后使用 find 和 accumulate 求和。  
+
+```
+G:/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/istream:980:5: note: candidate: 'template<class _Istream, class _Tp> typename std::enable_if<std::__and_<std::__not_<std::is_lvalue_reference<_Tp> >, std::__is_convertible_to_basic_istream<_Istream>, std::__is_extractable<typename std::__is_convertible_to_basic_istream<_Tp>::__istream_type, _Tp&&, void> >::value, typename std::__is_convertible_to_basic_istream<_Tp>::__istream_type>::type std::operator>>(_Istream&&, _Tp&&)'
+     operator>>(_Istream&& __is, _Tp&& __x)
+     ^~~~~~~~
+G:/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/istream:980:5: note:   template argument deduction/substitution failed:
+G:/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/istream: In substitution of 'template<class _Istream, class _Tp> typename std::enable_if<std::__and_<std::__not_<std::is_lvalue_reference<_Tp> >, std::__is_convertible_to_basic_istream<_Istream>, std::__is_extractable<typename std::__is_convertible_to_basic_istream<_Tp>::__istream_type, _Tp&&, void> >::value, typename std::__is_convertible_to_basic_istream<_Tp>::__istream_type>::type std::operator>>(_Istream&&, _Tp&&) [with _Istream = std::basic_istream<char>&; _Tp = Sales_data&]':
+G:/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/bits/stream_iterator.h:121:17:   required from 'void std::istream_iterator<_Tp, _CharT, _Traits, _Dist>::_M_read() [with _Tp = Sales_data; _CharT = char; _Traits = std::char_traits<char>; _Dist = long long int]'
+G:/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/bits/stream_iterator.h:70:9:   required from 'std::istream_iterator<_Tp, _CharT, _Traits, _Dist>::istream_iterator(std::istream_iterator<_Tp, _CharT, _Traits, _Dist>::istream_type&) [with _Tp = Sales_data; _CharT = char; _Traits = std::char_traits<char>; _Dist = long long int; std::istream_iterator<_Tp, _CharT, _Traits, _Dist>::istream_type = std::basic_istream<char>]'
+cpp_10-32.cpp:18:52:   required from here
+G:/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/istream:980:5: error: no type named 'type' in 'struct std::enable_if<false, std::basic_istream<char>&>'
+```
+
+windows win10 VScode mingw64编译器，使用姿势不太对。
+
+### 习题10.33  
+编写程序，接受三个参数：一个输入文件和两个输出文件的文件名。输入文件保存的应该是整数。使用 istream_iterator 读取输入文件。使用 ostream_iterator 将奇数写入第一个输入文件，每个值后面都跟一个空格。将偶数写入第二个输出文件，每个值都独占一行。  
+```
+#include<iostream>
+#include<fstream>
+#include<iterator>
+#include<algorithm>
+
+using namespace std;
+
+int main(int argc, char **argv)
+{
+    if (argc != 4)
+    {
+        return -1;
+    }
+    ifstream ifile(argv[1]);
+    ofstream of_odd(argv[2]), of_even(argv[3]);
+
+    istream_iterator<int> in_(ifile), in_eof;
+    ostream_iterator<int> out_odd(of_odd, " "), out_even(of_even, "\n");
+
+    for_each(in_, in_eof, [&out_odd, &out_even] (const int i) {
+        *(i%2==0?out_odd:out_even)++ = i;
+    });
+
+    return 0;
+}
+```
+
+### 习题10.34  
+使用 reverse_iterator 逆序打印一个vector。  
+```
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+int main()
+{
+    vector<int> ivec = {0,1,2,3,4,5,6,7,8,9};
+    for (auto it = ivec.crbegin(); it != ivec.crend(); ++it)
+    {
+        /* code */
+        cout << *it << " ";
+    }
+    
+    return 0;
+}
+```
+
+### 习题10.35  
+使用普通迭代器逆序打印一个vector。
+```
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+int main()
+{
+    vector<int> ivec = {0,1,2,3,4,5,6,7,8,9};
+    for (auto it = prev(ivec.cend()); it != ivec.cbegin(); --it)
+    {
+        /* code */
+        cout << *it << " ";
+    }
+    
+    return 0;
+}
+
+使用prev函数
+```
+
+### 习题10.36  
+使用 find 在一个 int 的list 中查找最后一个值为0的元素。  
+```
+#include<iostream>
+#include<list>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{ 
+    list<int> ilst = {0,1,2,3,0,4,5,6,7,0,8,9};
+    auto it = find(ilst.crbegin(), ilst.crend(), 0);
+    cout << *it << endl;
+    auto beg = it.base();
+    while (beg != ilst.cend())
+    {
+        /* code */
+        cout << *beg++ << " ";
+    }
+    
+    return 0;
+}
+```
+
+### 习题10.37  
+给定一个包含10 个元素的vector，将位置3到7之间的元素按逆序拷贝到一个list中。
+```
+#include<iostream>
+#include<list>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+int main()
+{
+    vector<int> ivec = {0,1,2,3,4,5,6,7,8,9};
+    list<int> ilst;
+    auto beg = find(ivec.cbegin(), ivec.cend(), 3);
+    auto end = find(ivec.cbegin(), ivec.cend(), 7);
+    copy(beg, end, front_inserter(ilst));
+    for (auto &x : ilst)
+    {
+        cout << x << " ";
+    }
+    
+    return 0;
+}
+```
+
+### 习题10.38  
+列出5个迭代器类别，以及每类迭代器所支持的操作。  
+
+* 输入迭代器 ==、!=、++、*、->  
+* 输出迭代器 ++、*  
+* 前向迭代器 ==、!=、++、*、->  
+* 双向迭代器 ==、!=、++、--、*、->  
+* 随机访问迭代器 ==、!=、++、--、*、->、<=、<、>、>=、+、+=、-、-=、（减法）-、下标运算符
+
+
+### 习题10.39  
+list 上的迭代器属于哪类？vector呢？  
+* list 上的迭代器是 双向迭代器
+* vector 上的迭代器是 随机访问迭代器
+
+### 习题10.40  
+你认为 copy 要求哪类迭代器？reverse 和 unique 呢？  
+* copy 需要两个输入迭代器，一个输出迭代器
+* reverse 需要双向迭代器
+* unique需要随机访问迭代器
+
+### 习题10.41  
+仅根据算法和参数的名字，描述下面每个标准库算法执行什么操作：
+```
+replace(beg, end, old_val, new_val);
+replace_if(beg, end, pred, new_val);
+replace_copy(beg, end, dest, old_val, new_val);
+replace_copy_if(beg, end, dest, pred, new_val);
+
+replace 在输入范围内用新值替换旧值
+replace_if 在输入范围内 满足谓词条件的 用新值替换旧值
+replace_copy 在输入范围内，复制元素到目标迭代器位置，用新值替换旧值  
+replace_copy_if 在输入范围内，复制元素到目标迭代器位置，满足谓词条件的，用新值替换旧值  
+```
+
+### 习题10.42  
+使用 list 代替 vector 重新实现10.2.3节中的去除重复单词的程序。
+```
+#include<iostream>
+#include<list>
+#include<algorithm>
+
+using namespace std;
+
+void elimDups(list<string> &words)
+{
+    //按字典序排序words，以便查找重复单词
+    words.sort();
+    words.unique();
+}
+
+int main()
+{
+    list<string> slst = {"the","quick","red","fox","jumps","over","the","slow","red","turtle"};
+    elimDups(slst);
+    for (auto &x : slst)
+    {
+        cout << x << " ";
+    }
+    cout << endl;
+    return 0;
+}
+```

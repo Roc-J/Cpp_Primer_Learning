@@ -1,4 +1,6 @@
 #include<iostream>
+#include<iterator>
+#include "../Ch07/cpp_7-12.h"
 
 using namespace std;
 
@@ -39,6 +41,26 @@ void func4()
 
     cout << j << endl;
 }
+
+void IOreWrite()
+{
+    istream_iterator<Sales_data> item_iter(cin), eof;
+    ostream_iterator<Sales_item> out_iter(cout, "\n");
+    //将第一笔交易记录存在sum中，并读取下一条记录
+    Sales_item sum = *item_iter++;
+    while( item_iter != eof) 
+    {
+        if (item_iter -> isbn() == sum.isbn())
+            sum += *item_iter++;
+        else
+        {
+            out_iter = sum;
+            sum = *item_iter++;
+        }
+    }
+    out_iter = sum; 
+}
+
 
 int main()
 {
