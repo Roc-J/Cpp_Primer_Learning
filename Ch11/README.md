@@ -79,3 +79,101 @@ int main()
     return 0;
 }
 ```
+
+## 练习11.5  
+
+解释map和set的区别。你如何选择使用哪个？
+```
+定义map时，必须既指明关键字类型又指明值类型；而定义一个set时，只需指明关键字类型，因为set中没有值。
+```
+
+## 练习11.6  
+
+解释set和list的区别。你如何选择使用哪个。
+```
+set是有序不重复集合，底层实现是红黑树。
+list是无序可重复集合，底层实现是链表。
+```
+
+## 练习11.7
+
+定义一个map，关键字是家庭的姓，值是一个vector，保存家中孩子（们）的名。编写代码，实现添加新的家庭以及向已有家庭中添加新的孩子。
+```
+#include<iostream>
+#include<map>
+#include<string>
+#include<vector>
+using namespace std;
+
+int main()
+{
+    map<string, vector<string>> f_map;
+    vector<string> svec;
+    string firstName, lastName;
+
+    cout << "input family name" << endl;
+    cin >> firstName;
+    while (cin >> lastName)
+    {
+        svec.push_back(lastName);
+    }
+    f_map[firstName] = svec;
+    for (auto &i : f_map)
+    {
+        cout << "family name: " << i.first << endl;
+        cout << "children names" << endl;
+        for (auto &j : i.second)
+        {
+            cout << j << " ";
+        }
+        
+    }
+    return 0;
+}
+```
+
+## 练习11.8
+
+编写一个程序，在一个vector而不是一个set中保存不重复的单词。使用set的优点是什么？
+```
+#include<iostream>
+#include<vector>
+#include<string>
+#include<set>
+#include<algorithm>
+using namespace std;
+
+int main()
+{
+    vector<string> svec;
+    set<string> sset;
+    string word;
+    while (cin >> word)
+    {
+        sset.insert(word);
+        auto index = find(svec.begin(), svec.end(), word);
+        if(!(index != svec.end()))
+        {
+            //cout << word << " is not in vector." << endl;
+            svec.push_back(word);
+        }
+        
+    }
+    cout << "set content is " << endl;
+    for (auto &i : sset)
+    {
+        cout << i << " ";
+    }
+    cout << endl;
+    cout << "vector content is " << endl;
+    for (auto &j : svec)
+    {
+        cout << j << " ";
+    }
+    return 0;
+}
+```
+使用set的优点是集合内元素不重复，不需要人工判断。
+
+## 练习11.9
+
