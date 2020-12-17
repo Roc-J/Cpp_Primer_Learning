@@ -32,6 +32,5 @@ int main()
     {
         cout << j << " ";
     }
-    
     return 0;
 }
